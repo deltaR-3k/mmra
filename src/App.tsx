@@ -154,6 +154,7 @@ function App() {
       if (autoPaste) {
         setTimeout(() => {
           window.electronAPI.pasteText(fullTranslation);
+          setInputText(''); // Clear input after pasting
         }, 100);
       }
 
