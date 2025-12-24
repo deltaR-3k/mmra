@@ -30,12 +30,12 @@ const createWindow = () => {
         },
     });
     // In production, load the index.html of the app.
-    // In development, load the local dev server.
     if (process.env.NODE_ENV === 'development') {
         mainWindow.loadURL('http://localhost:5173');
         // mainWindow.webContents.openDevTools(); // Optional: Keep closed for clean look
     }
     else {
+        // Use path.join to correctly resolve inside ASAR or dist folder
         mainWindow.loadFile(path_1.default.join(__dirname, '../dist/index.html'));
     }
     // IPC Handlers
@@ -53,11 +53,10 @@ const createWindow = () => {
     });
     electron_1.ipcMain.on('paste-text', (event, text) => {
         electron_1.clipboard.writeText(text);
-        // Key fix: We want to paste into the *previous* app, but keep RealTalk visible (as per user request).
-        // To do this, we must yield focus. "blur()" attempts to unfocus, effectively restoring focus to the underlying app.
-        // We do NOT call hide().
+        // Blur to transfer focus to previous app
         mainWindow.blur();
-        // Give a tiny moment for focus to switch, then paste
+        // Force always on top to prevent hiding behind other windows
+        mainWindow.setAlwaysOnTop(true, 'floating');
         setTimeout(() => {
             (0, child_process_1.exec)('osascript -e "tell application \\"System Events\\" to keystroke \\"v\\" using command down"', (error) => {
                 if (error)

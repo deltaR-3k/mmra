@@ -11,7 +11,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "RealTalk AI Translator",
+  "files": [
+    "dist",
+    "dist-electron",
+    "package.json"
+  ],
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "electron-squirrel-startup": "^1.0.1",

@@ -177,17 +177,31 @@ function App() {
 
   // Shared Title Bar
   const TitleBar = () => (
-    <div className="h-8 shrink-0 bg-gray-900/30 flex items-center justify-between px-3 drag-handle select-none border-b border-gray-800/30">
-      <div className="flex items-center gap-2">
-        <div className="flex gap-1.5 no-drag z-50">
-          <div className="w-2.5 h-2.5 rounded-full bg-red-500 hover:bg-red-600 cursor-pointer transition-colors"
-            onClick={(e) => { e.stopPropagation(); window.electronAPI.hideWindow(); }}></div>
-          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500 hover:bg-yellow-600 cursor-pointer transition-colors"
-            onClick={(e) => { e.stopPropagation(); window.electronAPI.minimizeWindow(); }}></div>
+    <div className="h-8 shrink-0 bg-gray-900/30 flex items-center justify-between px-3 drag-handle select-none border-b border-gray-800/30 relative">
+      <div className="flex items-center gap-2 relative z-50">
+        {/* no-drag region for buttons */}
+        <div className="flex gap-1.5 no-drag pointer-events-auto">
+          <div
+            className="w-2.5 h-2.5 rounded-full bg-red-500 hover:bg-red-400 cursor-pointer shadow-sm"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('Close clicked'); // Debug
+              if (window.electronAPI) window.electronAPI.hideWindow();
+            }}
+          ></div>
+          <div
+            className="w-2.5 h-2.5 rounded-full bg-yellow-500 hover:bg-yellow-400 cursor-pointer shadow-sm"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (window.electronAPI) window.electronAPI.minimizeWindow();
+            }}
+          ></div>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 no-drag z-50">
+      <div className="flex items-center gap-2 no-drag relative z-50 pointer-events-auto">
         {view !== 'translator' && (
           <button
             onClick={() => setView('translator')}
