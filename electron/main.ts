@@ -54,13 +54,18 @@ const createWindow = () => {
 
     ipcMain.on('paste-text', (event, text) => {
         clipboard.writeText(text);
-        // User requested NOT to hide window on paste
-        // mainWindow.hide(); 
 
-        // Use AppleScript to simulate Cmd+V
-        exec('osascript -e "tell application \\"System Events\\" to keystroke \\"v\\" using command down"', (error) => {
-            if (error) console.error('Failed to paste:', error);
-        });
+        // Key fix: We want to paste into the *previous* app, but keep RealTalk visible (as per user request).
+        // To do this, we must yield focus. "blur()" attempts to unfocus, effectively restoring focus to the underlying app.
+        // We do NOT call hide().
+        mainWindow.blur();
+
+        // Give a tiny moment for focus to switch, then paste
+        setTimeout(() => {
+            exec('osascript -e "tell application \\"System Events\\" to keystroke \\"v\\" using command down"', (error) => {
+                if (error) console.error('Failed to paste:', error);
+            });
+        }, 100);
     });
 
     // Get Clipboard Content

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "export NODE_ENV=development && concurrently \"vite\" \"wait-on http://localhost:5173 && tsc -p tsconfig.electron.json && electron .\"",
     "build": "tsc && vite build && tsc -p tsconfig.electron.json",
+    "dist": "npm run build && electron-builder --mac",
     "preview": "vite preview"
   },
   "keywords": [],

@@ -102,7 +102,7 @@ function App() {
           }
         } catch (e) { }
       }
-    }, 1000);
+    }, 500); // 500ms polling for snappier response
     return () => clearInterval(interval);
   }, [view, inputText]);
 
