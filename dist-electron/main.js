@@ -32,11 +32,12 @@ const createWindow = () => {
     // In production, load the index.html of the app.
     if (process.env.NODE_ENV === 'development') {
         mainWindow.loadURL('http://localhost:5173');
-        // mainWindow.webContents.openDevTools(); // Optional: Keep closed for clean look
     }
     else {
-        // Use path.join to correctly resolve inside ASAR or dist folder
-        mainWindow.loadFile(path_1.default.join(__dirname, '../dist/index.html'));
+        // Robust path resolution for packaged app
+        const distPath = path_1.default.join(__dirname, '../dist/index.html');
+        console.log('Loading file from:', distPath);
+        mainWindow.loadFile(distPath);
     }
     // IPC Handlers
     electron_1.ipcMain.on('resize-window', (event, width, height) => {
@@ -57,6 +58,8 @@ const createWindow = () => {
         mainWindow.blur();
         // Force always on top to prevent hiding behind other windows
         mainWindow.setAlwaysOnTop(true, 'floating');
+        mainWindow.setVisibleOnAllWorkspaces(true);
+        // Give a tiny moment for focus to switch, then paste
         setTimeout(() => {
             (0, child_process_1.exec)('osascript -e "tell application \\"System Events\\" to keystroke \\"v\\" using command down"', (error) => {
                 if (error)
