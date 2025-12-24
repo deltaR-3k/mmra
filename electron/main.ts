@@ -10,10 +10,12 @@ if (require('electron-squirrel-startup')) {
 const createWindow = () => {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 600,
+        width: 300,
         height: 200,
-        minWidth: 400,
-        minHeight: 150, // Much smaller minimum height
+        minWidth: 250,
+        minHeight: 150,
+        maxWidth: 600, // Limit max width
+        maxHeight: 800, // Limit max height
         frame: false,
         transparent: true,
         alwaysOnTop: true,
@@ -29,14 +31,17 @@ const createWindow = () => {
     // In development, load the local dev server.
     if (process.env.NODE_ENV === 'development') {
         mainWindow.loadURL('http://localhost:5173');
-        mainWindow.webContents.openDevTools();
+        // mainWindow.webContents.openDevTools(); // Optional: Keep closed for clean look
     } else {
         mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
     }
 
     // IPC Handlers
     ipcMain.on('resize-window', (event, width, height) => {
-        mainWindow.setSize(Math.round(width), Math.round(height));
+        // Enforce basic constraints to avoid glitches
+        const w = Math.max(250, Math.round(width));
+        const h = Math.max(150, Math.round(height));
+        mainWindow.setSize(w, h);
     });
 
     ipcMain.on('hide-window', () => {
@@ -49,7 +54,8 @@ const createWindow = () => {
 
     ipcMain.on('paste-text', (event, text) => {
         clipboard.writeText(text);
-        mainWindow.hide();
+        // User requested NOT to hide window on paste
+        // mainWindow.hide(); 
 
         // Use AppleScript to simulate Cmd+V
         exec('osascript -e "tell application \\"System Events\\" to keystroke \\"v\\" using command down"', (error) => {
