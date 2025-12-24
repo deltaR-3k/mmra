@@ -5,6 +5,7 @@ interface ElectronAPI {
     hideWindow: () => void;
     minimizeWindow: () => void;
     resizeWindow: (width: number, height: number) => void;
+    getClipboardText: () => Promise<string>;
     onShow: (callback: () => void) => void;
 }
 

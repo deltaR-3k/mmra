@@ -6,5 +6,6 @@ electron_1.contextBridge.exposeInMainWorld('electronAPI', {
     hideWindow: () => electron_1.ipcRenderer.send('hide-window'),
     minimizeWindow: () => electron_1.ipcRenderer.send('minimize-window'),
     resizeWindow: (width, height) => electron_1.ipcRenderer.send('resize-window', width, height),
+    getClipboardText: () => electron_1.ipcRenderer.invoke('get-clipboard-text'),
     onShow: (callback) => electron_1.ipcRenderer.on('window-show', callback),
 });

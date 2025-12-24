@@ -14,13 +14,13 @@ const createWindow = () => {
     // Create the browser window.
     const mainWindow = new electron_1.BrowserWindow({
         width: 600,
-        height: 400,
+        height: 200,
         minWidth: 400,
-        minHeight: 300,
+        minHeight: 150, // Much smaller minimum height
         frame: false,
         transparent: true,
         alwaysOnTop: true,
-        icon: path_1.default.join(__dirname, '../icon.png'), // Adjusted path assumption
+        icon: path_1.default.join(__dirname, '../icon.png'),
         webPreferences: {
             preload: path_1.default.join(__dirname, 'preload.js'),
             nodeIntegration: false,
@@ -38,7 +38,6 @@ const createWindow = () => {
     }
     // IPC Handlers
     electron_1.ipcMain.on('resize-window', (event, width, height) => {
-        // Optional: Add constraints or logic
         mainWindow.setSize(Math.round(width), Math.round(height));
     });
     electron_1.ipcMain.on('hide-window', () => {
@@ -56,6 +55,10 @@ const createWindow = () => {
                 console.error('Failed to paste:', error);
         });
     });
+    // Get Clipboard Content
+    electron_1.ipcMain.handle('get-clipboard-text', () => {
+        return electron_1.clipboard.readText();
+    });
     mainWindow.on('show', () => {
         mainWindow.webContents.send('window-show');
     });
@@ -63,6 +66,9 @@ const createWindow = () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 electron_1.app.whenReady().then(() => {
+    if (process.platform === 'darwin') {
+        electron_1.app.dock?.setIcon(path_1.default.join(__dirname, '../icon.png'));
+    }
     createWindow();
     electron_1.app.on('activate', () => {
         const windows = electron_1.BrowserWindow.getAllWindows();

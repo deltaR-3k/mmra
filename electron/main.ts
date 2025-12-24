@@ -11,13 +11,13 @@ const createWindow = () => {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
         width: 600,
-        height: 400,
+        height: 200,
         minWidth: 400,
-        minHeight: 300,
+        minHeight: 150, // Much smaller minimum height
         frame: false,
         transparent: true,
         alwaysOnTop: true,
-        icon: path.join(__dirname, '../icon.png'), // Adjusted path assumption
+        icon: path.join(__dirname, '../icon.png'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
@@ -36,7 +36,6 @@ const createWindow = () => {
 
     // IPC Handlers
     ipcMain.on('resize-window', (event, width, height) => {
-        // Optional: Add constraints or logic
         mainWindow.setSize(Math.round(width), Math.round(height));
     });
 
@@ -58,6 +57,11 @@ const createWindow = () => {
         });
     });
 
+    // Get Clipboard Content
+    ipcMain.handle('get-clipboard-text', () => {
+        return clipboard.readText();
+    });
+
     mainWindow.on('show', () => {
         mainWindow.webContents.send('window-show');
     });
@@ -66,6 +70,9 @@ const createWindow = () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.whenReady().then(() => {
+    if (process.platform === 'darwin') {
+        app.dock?.setIcon(path.join(__dirname, '../icon.png'));
+    }
     createWindow();
 
     app.on('activate', () => {
